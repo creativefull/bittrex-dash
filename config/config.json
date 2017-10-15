@@ -8,7 +8,14 @@
 			"login" : "/login"
 		},
 		"session" : {
-			"secret" : "cermaisession"
+			"secret" : "bittrexsession"
+		},
+		"connection" : {
+			"host" : "localhost",
+			"port" : 27017,
+			"db" : "bittrex",
+			"user" : "",
+			"pwd" : ""
 		}
 	},
 	"production" : {
@@ -20,7 +27,14 @@
 			"login" : "/login"
 		},
 		"session" : {
-			"secret" : "cermaisession"
+			"secret" : "bittrexsession"
+		},
+		"connection" : {
+			"host" : "localhost",
+			"port" : 27017,
+			"db" : "bittrex",
+			"user" : "",
+			"pwd" : ""
 		}
 	}
 }

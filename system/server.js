@@ -1,5 +1,7 @@
 var express = require('express'), app = express();
 var mode = process.env.NODE_ENV || 'development';
+mode = ['development','production'].indexOf(mode) < 0 ? 'development' : mode
+
 var config = require('../config/config.json')[mode] || require('../config/config.json')['development'];
 var mongoDB = require('mongodb').MongoClient;
 var path = require('path');
@@ -9,12 +11,17 @@ var routes = require('../routes');
 var ErrorHandler = require('./error');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
+const {setVariable, initVariable} = require('./global')
+// SET GLOBAL VARIABLE
+initVariable()
 
 function CermaiJs() {
 	this.app = app;
 	// HANDLE ERROR
 	new ErrorHandler().uncaughtException();
 	this.run = function() {
+		setVariable({key : 'mode', value : mode})
+
 		config.app.host = process.env.OPENSHIFT_NODEJS_IP || config.app.host;
 		config.app.port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.app.port;
 
@@ -65,11 +72,15 @@ function CermaiJs() {
 			}
 		}
 	}
+
 	this.initCermai = function(cermai, db) {
 		//// FOR POST REQUEST /////
 		if (db == null) {
 			console.log("CERMAI RUNNNIG WITHOUT CONNECTION");
+		} else {
+			setVariable({key : 'db', value : db})
 		}
+
 		if (mode == 'development') {
 			cermai.use(logger("dev"));
 		}
@@ -128,6 +139,7 @@ function CermaiJs() {
 				{
 					secret : secretName,
 					store : '',
+					saveUninitialized : false,
 					resave : true
 				}
 			));			

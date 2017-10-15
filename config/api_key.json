@@ -1,0 +1,10 @@
+{
+	"development" : {
+		"api_key" : "8d88471e93ed4a39bd17ed8c682f9676",
+		"secret_key" : "8d88471e93ed4a39bd17ed8c682f9676"
+	},
+	"production" : {
+		"api_key" : "8d88471e93ed4a39bd17ed8c682f9676",
+		"secret_key" : "8d88471e93ed4a39bd17ed8c682f9676"
+	}
+}
