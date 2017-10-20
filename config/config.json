@@ -20,7 +20,7 @@
 	},
 	"production" : {
 		"app" : {
-			"host" : "localhost",
+			"host" : "::",
 			"port" : 9000
 		},
 		"page" : {
