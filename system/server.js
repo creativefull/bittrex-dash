@@ -22,8 +22,8 @@ function CermaiJs() {
 	this.run = function() {
 		setVariable({key : 'mode', value : mode})
 
-		config.app.host = process.env.OPENSHIFT_NODEJS_IP || config.app.host;
-		config.app.port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.app.port;
+		config.app.host = process.env.NODE_HOST || config.app.host;
+		config.app.port = process.env.NODE_PORT || process.env.PORT || config.app.port;
 
 		if (config.app.host == undefined) {
 			app.listen(config.app.port, function() {

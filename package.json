@@ -21,6 +21,7 @@
     "mongodb": "^2.0.48",
     "morgan": "^1.7.0",
     "node-bittrex-api": "^0.7.6",
+    "node-cron": "^1.2.1",
     "redis": "^2.3.0",
     "stylus": "^0.52.4",
     "underscore": "^1.8.3"

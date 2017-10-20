@@ -30,11 +30,11 @@
 			"secret" : "bittrexsession"
 		},
 		"connection" : {
-			"host" : "localhost",
-			"port" : 27017,
-			"db" : "bittrex",
-			"user" : "",
-			"pwd" : ""
+			"host" : "ds119355.mlab.com:",
+			"port" : 19355,
+			"db" : "bittrexdash",
+			"user" : "admin",
+			"pwd" : "admin"
 		}
 	}
 }
