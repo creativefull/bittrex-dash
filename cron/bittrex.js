@@ -17,8 +17,8 @@ exports.getmarket = () => {
 	getmarketCalculate((result) => {
 		console.log(result)
 	})
-	// buyCalculate(console.log)
 }
+
 let getmarketCalculate = (callback) => {
 	bittrex.getmarketsummaries((data, error) => {
 		if (error) return console.error(error)
@@ -73,6 +73,8 @@ let getmarketCalculate = (callback) => {
 
 let buyCalculate = (callback) => {
 	const history_price = cermai.db.collection('history_price')
+	const history_buy = cermai.db.collection('history_buy')
+
 	let limit = buyIfPriceUpOverLastWTimeUnits <= 0 ? 0 : buyIfPriceUpOverLastWTimeUnits-1
 	let buy = false
 
@@ -104,12 +106,14 @@ let buyCalculate = (callback) => {
 					}
 
 					// 4TH CHECK
-					console.log(countFalls)
 					if (countFalls == dontBuyIfPriceDownOverLastZTimeUnits) {
 						console.log("NOT PASSED 4TH CHECK")
 						buy = false
 					}
 
+					if (buy) {
+						history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
+					}
 					console.log("BUY ? ", dataMarket.MarketName, buy)
 				}
 			})
