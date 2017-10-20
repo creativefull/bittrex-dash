@@ -22,6 +22,9 @@ function Error() {
 		const EventEmitter = require('events');
 		const ee = new EventEmitter();
 		process.on('uncaughtException', (err) => {
+			if (process.env.NODE_ENV!='production') {
+				console.error(err)
+			}
 			console.log(color.red(`Cermai Error: ${err}`))
 		})
 	}

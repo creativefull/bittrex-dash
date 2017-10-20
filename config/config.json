@@ -30,7 +30,7 @@
 			"secret" : "bittrexsession"
 		},
 		"connection" : {
-			"host" : "ds119355.mlab.com:",
+			"host" : "ds119355.mlab.com",
 			"port" : 19355,
 			"db" : "bittrexdash",
 			"user" : "admin",
