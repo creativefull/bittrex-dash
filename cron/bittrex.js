@@ -14,10 +14,10 @@ let dontBuyIfPercentageDownOverYTimeUnits = 5
 let dontBuyIfPriceDownOverLastZTimeUnits = 3
 
 exports.getmarket = () => {
-	// getmarketCalculate((result) => {
-	// 	console.log(result)
-	// })
-	buyCalculate(console.log)
+	getmarketCalculate((result) => {
+		console.log(result)
+	})
+	// buyCalculate(console.log)
 }
 let getmarketCalculate = (callback) => {
 	bittrex.getmarketsummaries((data, error) => {
