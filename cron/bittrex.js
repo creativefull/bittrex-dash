@@ -1,5 +1,6 @@
-console.log(__dirname)
-const config = require(__dirname + '/../config/api_key.json')[cermai.mode]
+const mode = process.env.NODE_ENV || 'development'
+const config = require(__dirname + '/../config/api_key.json')[mode]
+
 const bittrex = require('node-bittrex-api')
 bittrex.options({
 	apikey : config.api_key,
@@ -13,7 +14,8 @@ let dontBuyIfPercentageDownBy = 0.1
 let dontBuyIfPercentageDownOverYTimeUnits = 5
 let dontBuyIfPriceDownOverLastZTimeUnits = 3
 
-exports.getmarket = () => {
+exports.getmarket = (cermai) => {
+	global.cermai = cermai
 	getmarketCalculate((result) => {
 		console.log(result)
 	})

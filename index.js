@@ -1,6 +1,6 @@
 var server = require('./system/server'), cermai = new server();
 const {getMarket} = require(__dirname + '/cron/bittrex.js');
-var cron = require('cron').CronJob
+const cron = require('cron').CronJob
 
 cermai.connect(function(err, db) {
 	if (err) console.log(err);
@@ -16,6 +16,6 @@ cermai.connect(function(err, db) {
 
 	// RUN CRONJOB
 	new cron('* * 1 * * *', () => {
-		getMarket()
+		getMarket({cermai : {db : db}})
 	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles')
 })
