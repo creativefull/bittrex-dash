@@ -95,13 +95,13 @@ function CermaiJs() {
 			compress : true,
 			debug : true
 		}));
+		// ## PANGGIL ROUTES
+		////////// ERROR HANDLING ////////////////
+		routes(cermai, db);
 		cermai.use(express.static(path.join(__dirname, '../public')));
 		// USING BOWER
 		cermai.use("/bower", express.static(path.join(__dirname, '../bower_components')));
 		
-		// ## PANGGIL ROUTES
-		////////// ERROR HANDLING ////////////////
-		routes(cermai, db);
 		cermai.use(new ErrorHandler().error404);
 		cermai.use(new ErrorHandler().error500);
 	}

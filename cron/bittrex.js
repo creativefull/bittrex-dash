@@ -15,10 +15,11 @@ let dontBuyIfPercentageDownOverYTimeUnits = 5
 let dontBuyIfPriceDownOverLastZTimeUnits = 3
 
 exports.getmarket = (cermai) => {
-	global.cermai = cermai
-	getmarketCalculate((result) => {
-		console.log(result)
-	})
+	// global.cermai = cermai
+	console.log('getmarket !!!!!!!!!');
+	// getmarketCalculate((result) => {
+	// 	console.log(result)
+	// })
 }
 
 let getmarketCalculate = (callback) => {

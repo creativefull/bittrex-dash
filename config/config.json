@@ -1,7 +1,7 @@
 {
 	"development" : {
 		"app" : {
-			"host" : "localhost",
+			"host" : "::",
 			"port" : 9001
 		},
 		"page" : {
