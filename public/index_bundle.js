@@ -31137,23 +31137,28 @@ var Home = function (_Component) {
 			dontBuyIfPercentageDownBy: 0,
 			dontBuyIfPercentageDownOverYTimeUnits: 0,
 			dontBuyIfPriceDownOverLastZTimeUnits: 0,
-			disabled: false
+			InvestmentAmout: 0,
+			checkEvery: 0,
+			sellIfDropBy: 0,
+			disabled: false,
+			disabled2: false
 		};
 
 		_this.handleChange = _this.handleChange.bind(_this);
 		_this._saveBuy = _this._saveBuy.bind(_this);
-		_this._fetchConfigBuy = _this._fetchConfigBuy.bind(_this);
+		_this._saveSell = _this._saveSell.bind(_this);
+		_this._fetchConfig = _this._fetchConfig.bind(_this);
 		return _this;
 	}
 
 	_createClass(Home, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
-			this._fetchConfigBuy();
+			this._fetchConfig();
 		}
 	}, {
-		key: '_fetchConfigBuy',
-		value: function _fetchConfigBuy() {
+		key: '_fetchConfig',
+		value: function _fetchConfig() {
 			var _this2 = this;
 
 			fetch('/get/config/buy', {
@@ -31167,6 +31172,9 @@ var Home = function (_Component) {
 			}).then(function (responseData) {
 				if (responseData.status == 200) {
 					_this2.setState({
+						InvestmentAmout: responseData.data.InvestmentAmout,
+						checkEvery: responseData.data.checkEvery,
+						sellIfDropBy: responseData.data.sellIfDropBy,
 						BuyCointIfPercentageUpBy: responseData.data.BuyCointIfPercentageUpBy,
 						BuyCointIfPercentageUpOverXTimeUnits: responseData.data.BuyCointIfPercentageUpOverXTimeUnits,
 						BuyIfPriceUpOverLastWTimeUnits: responseData.data.BuyIfPriceUpOverLastWTimeUnits,
@@ -31196,14 +31204,14 @@ var Home = function (_Component) {
 			this.setState({
 				disabled: true
 			});
-			var BuyCointIfPercentageUpBy = parseInt(this.state.BuyCointIfPercentageUpBy);
-			var BuyCointIfPercentageUpOverXTimeUnits = parseInt(this.state.BuyCointIfPercentageUpOverXTimeUnits);
-			var BuyIfPriceUpOverLastWTimeUnits = parseInt(this.state.BuyIfPriceUpOverLastWTimeUnits);
-			var dontBuyIfPercentageDownBy = parseInt(this.state.dontBuyIfPercentageDownBy);
-			var dontBuyIfPercentageDownOverYTimeUnits = parseInt(this.state.dontBuyIfPercentageDownOverYTimeUnits);
-			var dontBuyIfPriceDownOverLastZTimeUnits = parseInt(this.state.dontBuyIfPriceDownOverLastZTimeUnits);
+			var BuyCointIfPercentageUpBy = this.state.BuyCointIfPercentageUpBy;
+			var BuyCointIfPercentageUpOverXTimeUnits = this.state.BuyCointIfPercentageUpOverXTimeUnits;
+			var BuyIfPriceUpOverLastWTimeUnits = this.state.BuyIfPriceUpOverLastWTimeUnits;
+			var dontBuyIfPercentageDownBy = this.state.dontBuyIfPercentageDownBy;
+			var dontBuyIfPercentageDownOverYTimeUnits = this.state.dontBuyIfPercentageDownOverYTimeUnits;
+			var dontBuyIfPriceDownOverLastZTimeUnits = this.state.dontBuyIfPriceDownOverLastZTimeUnits;
 			// fetch('http://192.168.43.144:9001/save/buy',{
-			fetch('/save/buy', {
+			fetch('/save/config', {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
@@ -31235,9 +31243,49 @@ var Home = function (_Component) {
 			});
 		}
 	}, {
+		key: '_saveSell',
+		value: function _saveSell() {
+			var _this4 = this;
+
+			this.setState({
+				disabled2: true
+			});
+			var InvestmentAmout = this.state.InvestmentAmout;
+			var checkEvery = this.state.checkEvery;
+			var sellIfDropBy = this.state.sellIfDropBy;
+			fetch('/save/config', {
+				method: "POST",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					InvestmentAmout: InvestmentAmout,
+					checkEvery: checkEvery,
+					BuyIfPriceUpOverLastWTimeUnits: BuyIfPriceUpOverLastWTimeUnits,
+					sellIfDropBy: sellIfDropBy
+				})
+			}).then(function (response) {
+				return response.json();
+			}).then(function (responseData) {
+				// console.log(responseData);
+				_this4.setState({
+					disabled2: false
+				});
+				_reactNotifyToast.notify.show('data berhasil di proses ', 'success');
+			}).catch(function (error) {
+				console.log('ERROR');
+				console.log(error);
+				_reactNotifyToast.notify.show('terjadi kesalahan pada server ', 'error');
+				_this4.setState({
+					disabled2: false
+				});
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this4 = this;
+			var _this5 = this;
 
 			return _react2.default.createElement(
 				'div',
@@ -31696,7 +31744,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyCointIfPercentageUpBy,
 												onChange: function onChange(event) {
-													_this4.handleChange('BuyCointIfPercentageUpBy', event);
+													_this5.handleChange('BuyCointIfPercentageUpBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31716,7 +31764,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyCointIfPercentageUpOverXTimeUnits,
 												onChange: function onChange(event) {
-													_this4.handleChange('BuyCointIfPercentageUpOverXTimeUnits', event);
+													_this5.handleChange('BuyCointIfPercentageUpOverXTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31736,7 +31784,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyIfPriceUpOverLastWTimeUnits,
 												onChange: function onChange(event) {
-													_this4.handleChange('BuyIfPriceUpOverLastWTimeUnits', event);
+													_this5.handleChange('BuyIfPriceUpOverLastWTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31756,7 +31804,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPercentageDownBy,
 												onChange: function onChange(event) {
-													_this4.handleChange('dontBuyIfPercentageDownBy', event);
+													_this5.handleChange('dontBuyIfPercentageDownBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31776,7 +31824,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPercentageDownOverYTimeUnits,
 												onChange: function onChange(event) {
-													_this4.handleChange('dontBuyIfPercentageDownOverYTimeUnits', event);
+													_this5.handleChange('dontBuyIfPercentageDownOverYTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31796,7 +31844,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPriceDownOverLastZTimeUnits,
 												onChange: function onChange(event) {
-													_this4.handleChange('dontBuyIfPriceDownOverLastZTimeUnits', event);
+													_this5.handleChange('dontBuyIfPriceDownOverLastZTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31877,7 +31925,10 @@ var Home = function (_Component) {
 							_react2.default.createElement(
 								_materialUi.CardActions,
 								null,
-								_react2.default.createElement(_RaisedButton2.default, { label: 'Save', primary: true })
+								_react2.default.createElement(_RaisedButton2.default, {
+									onClick: this._saveSell,
+									disabled: this.state.disabled2,
+									label: 'Save', primary: true })
 							)
 						)
 					),

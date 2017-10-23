@@ -3,7 +3,7 @@ module.exports = exports = function(cermai , db) {
 
 	// cermai.get('/', Welcome.index);
 	// cermai.get('/tes', Welcome.index);
-	cermai.post('/save/buy', Welcome.SaveBuy);
+	cermai.post('/save/config', Welcome.SaveBuy);
 	cermai.post('/get/config/buy', Welcome.getConfigBuy);
 	cermai.get('/bittrex', Welcome.bittrex);
 }
