@@ -31139,6 +31139,7 @@ var Home = function (_Component) {
 			dontBuyIfPriceDownOverLastZTimeUnits: 0,
 			InvestmentAmout: 0,
 			checkEvery: 0,
+			dataLog: [],
 			sellIfDropBy: 0,
 			disabled: false,
 			disabled2: false,
@@ -31151,6 +31152,7 @@ var Home = function (_Component) {
 		_this._saveSell = _this._saveSell.bind(_this);
 		_this._fetchConfig = _this._fetchConfig.bind(_this);
 		_this.onToggle = _this.onToggle.bind(_this);
+		_this._clearLog = _this._clearLog.bind(_this);
 		return _this;
 	}
 
@@ -31175,6 +31177,7 @@ var Home = function (_Component) {
 			}).then(function (responseData) {
 				if (responseData.status == 200) {
 					_this2.setState({
+						dataLog: responseData.logs,
 						InvestmentAmout: responseData.data.InvestmentAmout,
 						checkEvery: responseData.data.checkEvery,
 						sellIfDropBy: responseData.data.sellIfDropBy,
@@ -31304,13 +31307,33 @@ var Home = function (_Component) {
 				return response.json();
 			}).then(function (responseData) {
 				_this5.setState(obj);
-				// notify.show('data berhasil di proses ','success');
+			});
+		}
+	}, {
+		key: '_clearLog',
+		value: function _clearLog() {
+			var _this6 = this;
+
+			fetch('/clear/log', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				}
+			}).then(function (response) {
+				return response.json();
+			}).then(function (responseData) {
+				if (responseData.status == 200) {
+					_this6.setState({
+						dataLog: []
+					});
+				}
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this6 = this;
+			var _this7 = this;
 
 			return _react2.default.createElement(
 				'div',
@@ -31341,14 +31364,14 @@ var Home = function (_Component) {
 										null,
 										_react2.default.createElement(_materialUi.Toggle, {
 											onToggle: function onToggle(event, isInputChecked) {
-												_this6.onToggle(event, isInputChecked, 'demo');
+												_this7.onToggle(event, isInputChecked, 'demo');
 											},
 											defaultToggled: this.state.demo,
 											label: 'Demo Mode' }),
 										_react2.default.createElement(_materialUi.Toggle, {
 											defaultToggled: this.state.pause,
 											onToggle: function onToggle(event, isInputChecked) {
-												_this6.onToggle(event, isInputChecked, 'pause');
+												_this7.onToggle(event, isInputChecked, 'pause');
 											},
 											label: 'Pause' }),
 										_react2.default.createElement(
@@ -31514,45 +31537,33 @@ var Home = function (_Component) {
 								subtitle: 'Realtime logs output' }),
 							_react2.default.createElement(
 								_materialUi.CardText,
-								null,
-								_react2.default.createElement(
-									'span',
-									null,
-									_react2.default.createElement(
-										'b',
-										null,
-										'2017-10-15 10:20:20'
-									),
-									' : get market summaries'
-								),
-								_react2.default.createElement('br', null),
-								_react2.default.createElement(
-									'span',
-									null,
-									_react2.default.createElement(
-										'b',
-										null,
-										'2017-10-15 10:20:21'
-									),
-									' : calculate the presentage'
-								),
-								_react2.default.createElement('br', null),
-								_react2.default.createElement(
-									'span',
-									null,
-									_react2.default.createElement(
-										'b',
-										null,
-										'2017-10-15 10:20:22'
-									),
-									' : buy LTC @ BTC 0.0001'
-								),
-								_react2.default.createElement('br', null)
+								{
+									style: { overflow: 'auto', height: 200, display: 'block', marginLeft: 20 } },
+								this.state.dataLog.map(function (item, i) {
+									return _react2.default.createElement(
+										'div',
+										{ key: i },
+										_react2.default.createElement(
+											'span',
+											null,
+											_react2.default.createElement(
+												'b',
+												null,
+												item.created_at
+											),
+											' ',
+											item.message
+										),
+										_react2.default.createElement('br', null)
+									);
+								})
 							),
 							_react2.default.createElement(
 								_materialUi.CardActions,
 								null,
-								_react2.default.createElement(_RaisedButton2.default, { label: 'Clear' })
+								_react2.default.createElement(_RaisedButton2.default, {
+									onClick: this._clearLog,
+									label: 'Clear' })
 							)
 						)
 					),
@@ -31779,7 +31790,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyCointIfPercentageUpBy,
 												onChange: function onChange(event) {
-													_this6.handleChange('BuyCointIfPercentageUpBy', event);
+													_this7.handleChange('BuyCointIfPercentageUpBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31799,7 +31810,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyCointIfPercentageUpOverXTimeUnits,
 												onChange: function onChange(event) {
-													_this6.handleChange('BuyCointIfPercentageUpOverXTimeUnits', event);
+													_this7.handleChange('BuyCointIfPercentageUpOverXTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31819,7 +31830,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.BuyIfPriceUpOverLastWTimeUnits,
 												onChange: function onChange(event) {
-													_this6.handleChange('BuyIfPriceUpOverLastWTimeUnits', event);
+													_this7.handleChange('BuyIfPriceUpOverLastWTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31839,7 +31850,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPercentageDownBy,
 												onChange: function onChange(event) {
-													_this6.handleChange('dontBuyIfPercentageDownBy', event);
+													_this7.handleChange('dontBuyIfPercentageDownBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31859,7 +31870,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPercentageDownOverYTimeUnits,
 												onChange: function onChange(event) {
-													_this6.handleChange('dontBuyIfPercentageDownOverYTimeUnits', event);
+													_this7.handleChange('dontBuyIfPercentageDownOverYTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31879,7 +31890,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.dontBuyIfPriceDownOverLastZTimeUnits,
 												onChange: function onChange(event) {
-													_this6.handleChange('dontBuyIfPriceDownOverLastZTimeUnits', event);
+													_this7.handleChange('dontBuyIfPriceDownOverLastZTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31927,7 +31938,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.InvestmentAmout,
 												onChange: function onChange(event) {
-													_this6.handleChange('InvestmentAmout', event);
+													_this7.handleChange('InvestmentAmout', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31947,7 +31958,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.checkEvery,
 												onChange: function onChange(event) {
-													_this6.handleChange('checkEvery', event);
+													_this7.handleChange('checkEvery', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31967,7 +31978,7 @@ var Home = function (_Component) {
 											_react2.default.createElement('input', {
 												value: this.state.sellIfDropBy,
 												onChange: function onChange(event) {
-													_this6.handleChange('sellIfDropBy', event);
+													_this7.handleChange('sellIfDropBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })

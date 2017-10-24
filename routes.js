@@ -5,6 +5,7 @@ module.exports = exports = function(cermai , db) {
 	// cermai.get('/tes', Welcome.index);
 	cermai.post('/save/config', Welcome.SaveBuy);
 	cermai.post('/save/cron', Welcome.SaveCron);
+	cermai.post('/clear/log', Welcome.clearLogs);
 	cermai.post('/get/config', Welcome.getConfigData);
 	cermai.get('/bittrex', Welcome.bittrex);
 }

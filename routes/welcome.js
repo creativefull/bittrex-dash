@@ -1,6 +1,7 @@
 function Welcome(db) {
 	const ModelConfigBuy = db.collection('configBuy');
 	const ModelConfig = db.collection('config');
+	const ModelLog = db.collection('logs');
 	const async = require('async');
 
 	this.index = function(req,res,next) {
@@ -11,6 +12,12 @@ function Welcome(db) {
 		const {getmarket} = require(__dirname + '/../cron/bittrex')
 		getmarket({cermai : {db : db}})
 		res.send("Bittrex");
+	}
+
+	this.clearLogs = (req, res, next) => {
+		ModelLog.remove({}, (err, rows) => {
+			return res.json({status : 200 });
+		});
 	}
 
 	this.SaveBuy = (req, res, next) => {
@@ -40,6 +47,11 @@ function Welcome(db) {
 				ModelConfig.findOne({}, (err, row) => {
 					return callback(err, row);
 				});
+			},
+			function (callback) {
+				ModelLog.find({}).sort({created_at : -1 }).toArray(function (err, rows) {
+					return callback(err, rows);
+				});
 			}
 		], (err, results) => {
 			if (err) return res.json({status : 404});
@@ -50,7 +62,7 @@ function Welcome(db) {
 			if (results[1].demo != undefined ) {
 				output['demo'] = results[1].demo;
 			}
-			return res.json({status : 200, data : output});
+			return res.json({status : 200, data : output, logs : results[2]});
 		});
 	}
 
