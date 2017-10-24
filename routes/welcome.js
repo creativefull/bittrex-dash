@@ -1,5 +1,7 @@
 function Welcome(db) {
 	const ModelConfigBuy = db.collection('configBuy');
+	const ModelConfig = db.collection('config');
+	const async = require('async');
 
 	this.index = function(req,res,next) {
 		res.render('welcome');
@@ -20,21 +22,53 @@ function Welcome(db) {
 					return res.json({status : 200});
 				});
 			} else {
-				ModelConfigBuy.update({_id : "1"},b, (err, rows) => {
+				ModelConfigBuy.update({_id : "1"},{ $set : b}, (err, rows) => {
 					return res.json({status : 200});
 				});
 			}
 		});
 	}
 
-	this.getConfigBuy = (req, res, next) => {
-		ModelConfigBuy.findOne({}, (err, rows) => {
-			if (rows == null) {
-				return res.json({status : 404});
-			} else {
-				return res.json({status : 200 , data : rows});
+	this.getConfigData = (req, res, next) => {
+		async.parallel([
+			function (callback) {
+				ModelConfigBuy.findOne({}, (err, rows) => {
+					callback(err, rows);
+				});
+			},
+			function (callback) {
+				ModelConfig.findOne({}, (err, row) => {
+					return callback(err, row);
+				});
 			}
-		})
+		], (err, results) => {
+			if (err) return res.json({status : 404});
+			let output = results[0];
+			if (results[1].pause != undefined ) {
+				output['pause'] = results[1].pause;
+			}
+			if (results[1].demo != undefined ) {
+				output['demo'] = results[1].demo;
+			}
+			return res.json({status : 200, data : output});
+		});
+	}
+
+	this.SaveCron = (req, res, next) => {
+		var b = req.body;
+		console.log(b);
+		ModelConfig.findOne({},(err, cek) => {
+			if (cek == null) {
+				b['_id'] = '1';
+				ModelConfig.insert(b, (err, rows) => {
+					return res.json({status : 200});
+				});
+			} else {
+				ModelConfig.update({_id : '1'}, {$set : b} , (err, rows) => {
+					return res.json({status : 200});
+				});
+			}
+		});
 	}
 }
 module.exports = Welcome;
