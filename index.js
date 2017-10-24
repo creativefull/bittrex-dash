@@ -4,6 +4,7 @@ const cron = require('cron').CronJob
 
 cermai.connect(function(err, db) {
 	if (err) console.log(err);
+	const ModelConfig = db.collection('config');
 
 	///// INSTALL CERMAI HELPER ///////
 	cermai.initHelper(cermai.app);
@@ -17,7 +18,11 @@ cermai.connect(function(err, db) {
 	// RUN CRONJOB
 	// new cron('* * 1 * * *', () => {
 	// getMarket({cermai : {db : db}})
-	// new cron('* * * * * *', () => {
-	// 	console.log('cron');
-	// }, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
+	new cron('* * * * * *', () => {
+		ModelConfig.findOne({} , (err, rows) => {
+			if (rows.pause) {
+				console.log('run cron');
+			}
+		})
+	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
 })
