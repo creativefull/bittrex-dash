@@ -7,12 +7,13 @@ bittrex.options({
 	apisecret : config.api_secret
 })
 
-let buyCoinIfPercentageUpBy = 0.03
-let buyCoinIfPercentageUpOverXTimeUnits = 6
-let buyIfPriceUpOverLastWTimeUnits = 3
-let dontBuyIfPercentageDownBy = 0.1
-let dontBuyIfPercentageDownOverYTimeUnits = 5
-let dontBuyIfPriceDownOverLastZTimeUnits = 3
+// let buyCoinIfPercentageUpBy = 0.03
+// let buyIfPriceUpOverLastWTimeUnits = 3
+// let dontBuyIfPercentageDownBy = 0.1
+// let dontBuyIfPriceDownOverLastZTimeUnits = 3
+
+// let buyCoinIfPercentageUpOverXTimeUnits = 6
+// let dontBuyIfPercentageDownOverYTimeUnits = 5
 
 exports.getmarket = (cermai) => {
 	// global.cermai = cermai
@@ -23,6 +24,11 @@ exports.getmarket = (cermai) => {
 }
 
 let getmarketCalculate = (callback) => {
+	const ModelConfigBuy = cermai.db.collection('configBuy');
+	ModelConfigBuy.findOne({}, (errr, configBuy) => {
+		let buyCoinIfPercentageUpOverXTimeUnits = configBuy.buyCoinIfPercentageUpOverXTimeUnits;
+		let dontBuyIfPercentageDownOverYTimeUnits = configBuy.dontBuyIfPercentageDownOverYTimeUnits;
+	});
 	bittrex.getmarketsummaries((data, error) => {
 		if (error) return console.error(error)
 		data.result.forEach((dataMarket) => {
@@ -75,55 +81,64 @@ let getmarketCalculate = (callback) => {
 }
 
 let buyCalculate = (callback) => {
-	const history_price = cermai.db.collection('history_price')
-	const history_buy = cermai.db.collection('history_buy')
+	const ModelConfigBuy = cermai.db.collection('configBuy');
+	const history_price = cermai.db.collection('history_price');
+	const history_buy = cermai.db.collection('history_buy');
 
-	let limit = buyIfPriceUpOverLastWTimeUnits <= 0 ? 0 : buyIfPriceUpOverLastWTimeUnits-1
-	let buy = false
+	ModelConfigBuy.findOne({}, (err, configBuy) => {
+		let buyCoinIfPercentageUpBy = configBuy.buyCoinIfPercentageUpBy;
+		let buyIfPriceUpOverLastWTimeUnits = configBuy.buyIfPriceUpOverLastWTimeUnits;
+		let dontBuyIfPercentageDownBy = configBuy.dontBuyIfPercentageDownBy;
+		let dontBuyIfPriceDownOverLastZTimeUnits = configBuy.dontBuyIfPriceDownOverLastZTimeUnits;
+		
+		let limit = buyIfPriceUpOverLastWTimeUnits <= 0 ? 0 : buyIfPriceUpOverLastWTimeUnits-1
+		let buy = false
 
-	bittrex.getmarkets((markets) => {
-		markets.result.forEach((dataMarket) => {
-			history_price.find({MarketName : dataMarket.MarketName}).sort({_id : -1}).limit(limit).toArray((err, results) => {
-				if (err) console.error(err)
-				if (results.length > 0) {
-					let countFalls = 0
-					// 1ST CHECK
-					if (results[0].percentageChangeSinceXTimeUnitsAgo >= buyCoinIfPercentageUpBy) {
-						console.log("BUY IN 1ST CHECK")
-						buy = true
-					}
-
-					// 2ND CHECK
-					results.forEach((result) => {
-						if (result.changeSincePrevious < 0) {
-							console.log("NOT PASSED 2ND CHECK")
-							buy = false
-							countFalls += 1
+		bittrex.getmarkets((markets) => {
+			markets.result.forEach((dataMarket) => {
+				history_price.find({MarketName : dataMarket.MarketName}).sort({_id : -1}).limit(limit).toArray((err, results) => {
+					if (err) console.error(err)
+					if (results.length > 0) {
+						let countFalls = 0
+						// 1ST CHECK
+						if (results[0].percentageChangeSinceXTimeUnitsAgo >= buyCoinIfPercentageUpBy) {
+							console.log("BUY IN 1ST CHECK")
+							buy = true
 						}
-					})
 
-					// 3RD CHECK
-					if (results[0].percentageChangeSinceYTimeUnitsAgo < (-1*dontBuyIfPercentageDownBy)) {
-						console.log("NOT PASSED 3RD CHECK")
-						buy = false
-					}
+						// 2ND CHECK
+						results.forEach((result) => {
+							if (result.changeSincePrevious < 0) {
+								console.log("NOT PASSED 2ND CHECK")
+								buy = false
+								countFalls += 1
+							}
+						})
 
-					// 4TH CHECK
-					if (countFalls == dontBuyIfPriceDownOverLastZTimeUnits) {
-						console.log("NOT PASSED 4TH CHECK")
-						buy = false
-					}
+						// 3RD CHECK
+						if (results[0].percentageChangeSinceYTimeUnitsAgo < (-1*dontBuyIfPercentageDownBy)) {
+							console.log("NOT PASSED 3RD CHECK")
+							buy = false
+						}
 
-					if (buy) {
-						history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
+						// 4TH CHECK
+						if (countFalls == dontBuyIfPriceDownOverLastZTimeUnits) {
+							console.log("NOT PASSED 4TH CHECK")
+							buy = false
+						}
+
+						if (buy) {
+							history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
+						}
+						console.log("BUY ? ", dataMarket.MarketName, buy)
 					}
-					console.log("BUY ? ", dataMarket.MarketName, buy)
-				}
+				})
 			})
-		})
 
-		callback()
-	})
+			callback()
+		})
+	});
+
 }
 
 exports.sellCalculate = () => {

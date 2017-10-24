@@ -21,7 +21,7 @@ cermai.connect(function(err, db) {
 	new cron('* 59 * * * *', () => {
 		ModelConfig.findOne({} , (err, rows) => {
 			if (rows.pause) {
-				console.log('run cron');
+				console.log('run cron perjam');
 				// getMarket({cermai : {db : db}})
 			}
 		})
@@ -31,7 +31,7 @@ cermai.connect(function(err, db) {
 	new cron('* * 23 * * *', () => {
 		ModelConfig.findOne({} , (err, rows) => {
 			if (rows.pause) {
-				console.log('run cron');
+				console.log('run cron 24 jam');
 				sellCalculate();
 			}
 		})

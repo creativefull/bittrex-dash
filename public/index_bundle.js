@@ -31131,8 +31131,8 @@ var Home = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
 
 		_this.state = {
-			BuyCointIfPercentageUpBy: 0,
-			BuyCointIfPercentageUpOverXTimeUnits: 0,
+			BuyCoinIfPercentageUpBy: 0,
+			BuyCoinIfPercentageUpOverXTimeUnits: 0,
 			BuyIfPriceUpOverLastWTimeUnits: 0,
 			dontBuyIfPercentageDownBy: 0,
 			dontBuyIfPercentageDownOverYTimeUnits: 0,
@@ -31153,6 +31153,7 @@ var Home = function (_Component) {
 		_this._fetchConfig = _this._fetchConfig.bind(_this);
 		_this.onToggle = _this.onToggle.bind(_this);
 		_this._clearLog = _this._clearLog.bind(_this);
+		_this._sellNow = _this._sellNow.bind(_this);
 		return _this;
 	}
 
@@ -31160,6 +31161,21 @@ var Home = function (_Component) {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			this._fetchConfig();
+		}
+	}, {
+		key: '_sellNow',
+		value: function _sellNow() {
+			fetch('/proses/sell', {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				}
+			}).then(function (response) {
+				return response.json();
+			}).then(function (responseData) {
+				_reactNotifyToast.notify.show('proses sell success', 'success');
+			});
 		}
 	}, {
 		key: '_fetchConfig',
@@ -31181,8 +31197,8 @@ var Home = function (_Component) {
 						InvestmentAmout: responseData.data.InvestmentAmout,
 						checkEvery: responseData.data.checkEvery,
 						sellIfDropBy: responseData.data.sellIfDropBy,
-						BuyCointIfPercentageUpBy: responseData.data.BuyCointIfPercentageUpBy,
-						BuyCointIfPercentageUpOverXTimeUnits: responseData.data.BuyCointIfPercentageUpOverXTimeUnits,
+						BuyCoinIfPercentageUpBy: responseData.data.BuyCoinIfPercentageUpBy,
+						BuyCoinIfPercentageUpOverXTimeUnits: responseData.data.BuyCoinIfPercentageUpOverXTimeUnits,
 						BuyIfPriceUpOverLastWTimeUnits: responseData.data.BuyIfPriceUpOverLastWTimeUnits,
 						dontBuyIfPercentageDownBy: responseData.data.dontBuyIfPercentageDownBy,
 						dontBuyIfPercentageDownOverYTimeUnits: responseData.data.dontBuyIfPercentageDownOverYTimeUnits,
@@ -31212,8 +31228,8 @@ var Home = function (_Component) {
 			this.setState({
 				disabled: true
 			});
-			var BuyCointIfPercentageUpBy = this.state.BuyCointIfPercentageUpBy;
-			var BuyCointIfPercentageUpOverXTimeUnits = this.state.BuyCointIfPercentageUpOverXTimeUnits;
+			var BuyCoinIfPercentageUpBy = this.state.BuyCoinIfPercentageUpBy;
+			var BuyCoinIfPercentageUpOverXTimeUnits = this.state.BuyCoinIfPercentageUpOverXTimeUnits;
 			var BuyIfPriceUpOverLastWTimeUnits = this.state.BuyIfPriceUpOverLastWTimeUnits;
 			var dontBuyIfPercentageDownBy = this.state.dontBuyIfPercentageDownBy;
 			var dontBuyIfPercentageDownOverYTimeUnits = this.state.dontBuyIfPercentageDownOverYTimeUnits;
@@ -31226,8 +31242,8 @@ var Home = function (_Component) {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					BuyCointIfPercentageUpBy: BuyCointIfPercentageUpBy,
-					BuyCointIfPercentageUpOverXTimeUnits: BuyCointIfPercentageUpOverXTimeUnits,
+					BuyCoinIfPercentageUpBy: BuyCoinIfPercentageUpBy,
+					BuyCoinIfPercentageUpOverXTimeUnits: BuyCoinIfPercentageUpOverXTimeUnits,
 					BuyIfPriceUpOverLastWTimeUnits: BuyIfPriceUpOverLastWTimeUnits,
 					dontBuyIfPercentageDownBy: dontBuyIfPercentageDownBy,
 					dontBuyIfPercentageDownOverYTimeUnits: dontBuyIfPercentageDownOverYTimeUnits,
@@ -31380,7 +31396,7 @@ var Home = function (_Component) {
 											'Sell Up'
 										),
 										_react2.default.createElement('br', null),
-										_react2.default.createElement(_RaisedButton2.default, { label: 'Sell Now', primary: true })
+										_react2.default.createElement(_RaisedButton2.default, { onClick: this._sellNow, label: 'Sell Now', primary: true })
 									)
 								)
 							),
@@ -31538,7 +31554,7 @@ var Home = function (_Component) {
 							_react2.default.createElement(
 								_materialUi.CardText,
 								{
-									style: { overflow: 'auto', height: 200, display: 'block', marginLeft: 20 } },
+									style: { overflow: 'auto', height: 150, display: 'block', marginLeft: 20 } },
 								this.state.dataLog.map(function (item, i) {
 									return _react2.default.createElement(
 										'div',
@@ -31782,15 +31798,15 @@ var Home = function (_Component) {
 										_react2.default.createElement(
 											'label',
 											{ className: 'col-lg-3 control-label' },
-											'BuyCointIfPercentageUpBy'
+											'BuyCoinIfPercentageUpBy'
 										),
 										_react2.default.createElement(
 											'div',
 											{ className: 'col-lg-7' },
 											_react2.default.createElement('input', {
-												value: this.state.BuyCointIfPercentageUpBy,
+												value: this.state.BuyCoinIfPercentageUpBy,
 												onChange: function onChange(event) {
-													_this7.handleChange('BuyCointIfPercentageUpBy', event);
+													_this7.handleChange('BuyCoinIfPercentageUpBy', event);
 												},
 												type: 'text',
 												className: 'form-control' })
@@ -31802,15 +31818,15 @@ var Home = function (_Component) {
 										_react2.default.createElement(
 											'label',
 											{ className: 'col-lg-3 control-label' },
-											'BuyCointIfPercentageUpOverXTimeUnits'
+											'BuyCoinIfPercentageUpOverXTimeUnits'
 										),
 										_react2.default.createElement(
 											'div',
 											{ className: 'col-lg-7' },
 											_react2.default.createElement('input', {
-												value: this.state.BuyCointIfPercentageUpOverXTimeUnits,
+												value: this.state.BuyCoinIfPercentageUpOverXTimeUnits,
 												onChange: function onChange(event) {
-													_this7.handleChange('BuyCointIfPercentageUpOverXTimeUnits', event);
+													_this7.handleChange('BuyCoinIfPercentageUpOverXTimeUnits', event);
 												},
 												type: 'text',
 												className: 'form-control' })

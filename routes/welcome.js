@@ -49,7 +49,7 @@ function Welcome(db) {
 				});
 			},
 			function (callback) {
-				ModelLog.find({}).sort({created_at : -1 }).toArray(function (err, rows) {
+				ModelLog.find({}).sort({created_at : -1 }).limit(5).toArray(function (err, rows) {
 					return callback(err, rows);
 				});
 			}
