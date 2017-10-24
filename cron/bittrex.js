@@ -125,3 +125,7 @@ let buyCalculate = (callback) => {
 		callback()
 	})
 }
+
+exports.sellCalculate = () => {
+	console.log('sell calculate');
+}

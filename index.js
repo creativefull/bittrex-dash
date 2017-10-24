@@ -1,5 +1,5 @@
 var server = require('./system/server'), cermai = new server();
-// const {getMarket} = require(__dirname + '/cron/bittrex.js');
+const {getMarket, sellCalculate} = require(__dirname + '/cron/bittrex.js');
 const cron = require('cron').CronJob
 
 cermai.connect(function(err, db) {
@@ -16,12 +16,23 @@ cermai.connect(function(err, db) {
 	cermai.run();
 
 	// RUN CRONJOB
-	// new cron('* * 1 * * *', () => {
-	// getMarket({cermai : {db : db}})
-	new cron('* * * * * *', () => {
+
+	// run cron jon  1 jam
+	new cron('* 59 * * * *', () => {
 		ModelConfig.findOne({} , (err, rows) => {
 			if (rows.pause) {
 				console.log('run cron');
+				// getMarket({cermai : {db : db}})
+			}
+		})
+	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
+
+	// run cron jon 24 jam
+	new cron('* * 23 * * *', () => {
+		ModelConfig.findOne({} , (err, rows) => {
+			if (rows.pause) {
+				console.log('run cron');
+				sellCalculate();
 			}
 		})
 	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
