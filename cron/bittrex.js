@@ -18,13 +18,8 @@ bittrex.options({
 // let dontBuyIfPercentageDownOverYTimeUnits = 5
 
 exports.getMarket = async (cermai) => {
-	await getmarketCalculate()
+	// await getmarketCalculate()
 	await buyCalculate()
-	// getmarketCalculate((result) => {
-	// 	buyCalculate(() => {
-	// 		console.log("Cron job buy and get calculate done", new Date())
-	// 	})
-	// })
 }
 
 let getmarketCalculate = async (callback) => {
@@ -157,9 +152,14 @@ let buyCalculate = async () => {
 									buy = false
 								}
 
+								// DO BUY ITEM
 								if (buy) {
 									history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
+
+									// DO REAL BUY
+									
 								}
+
 								console.log("BUY ? ", dataMarket.MarketName, buy)
 								insertLog({ message : "BUY ? " + dataMarket.MarketName + " " + buy, created_at : new Date()})
 							})
