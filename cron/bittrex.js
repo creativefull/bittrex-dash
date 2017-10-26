@@ -16,12 +16,11 @@ bittrex.options({
 // let dontBuyIfPercentageDownOverYTimeUnits = 5
 
 exports.getMarket = (cermai) => {
-	buyCalculate(() => {
-
+	getmarketCalculate((result) => {
+		buyCalculate(() => {
+			console.log("Cron job buy and get calculate done", new Date())
+		})
 	})
-	// getmarketCalculate((result) => {
-	// 	console.log(result)
-	// })
 }
 
 let getmarketCalculate = (callback) => {
