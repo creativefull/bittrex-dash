@@ -25,6 +25,7 @@ function Error() {
 			if (process.env.NODE_ENV!='production') {
 				console.error(err)
 			}
+			console.error(err)
 			console.log(color.red(`Cermai Error: ${err}`))
 		})
 	}
