@@ -29,12 +29,12 @@ cermai.connect(function(err, db) {
 	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
 
 	// run cron jon 24 jam
-	// new cron('* * 23 * * *', () => {
-	// 	ModelConfig.findOne({} , (err, rows) => {
-	// 		if (rows.pause) {
-	// 			console.log('run cron 24 jam');
-	// 			sellCalculate();
-	// 		}
-	// 	})
-	// }, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
+	new cron('* * 23 * * *', () => {
+		ModelConfig.findOne({} , (err, rows) => {
+			if (rows.pause) {
+				console.log('run cron 24 jam');
+				sellCalculate();
+			}
+		})
+	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
 })
