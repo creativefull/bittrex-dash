@@ -13,6 +13,9 @@ cermai.connect(function(err, db) {
 	//// INSTALATION CERMAI ////
 	cermai.initCermai(cermai.app, db);
 	//// RUN CERMAI APP /////
+	// INSTALL SOCKET
+	cermai.webSocket();
+	// INSTALL SOCKET
 	cermai.run();
 
 	// RUN CRONJOB

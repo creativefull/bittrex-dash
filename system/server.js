@@ -1,4 +1,6 @@
 var express = require('express'), app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http,{pingTimeout: 30000});
 var mode = process.env.NODE_ENV || 'development';
 mode = ['development','production'].indexOf(mode) < 0 ? 'development' : mode
 
@@ -26,15 +28,23 @@ function CermaiJs() {
 		config.app.port = process.env.NODE_PORT || process.env.PORT || config.app.port;
 
 		if (config.app.host == undefined) {
-			app.listen(config.app.port, function() {
+			http.listen(config.app.port, function() {
 				console.log("Application Running On *:" + config.app.port);
 			});
 		}
 		else {
-			app.listen(config.app.port, config.app.host, function() {
+			http.listen(config.app.port, config.app.host, function() {
 				console.log("Application Running On " + config.app.host + ":" + config.app.port);
 			});
 		}
+	}
+
+	this.webSocket = function () {
+		// console.log(io.sockets);
+		io.sockets.on('connection', (socket) => {
+			console.log('connected !!!');
+			setVariable({key : 'socket', value : socket})
+		});
 	}
 
 	this.connect = function(cb) {

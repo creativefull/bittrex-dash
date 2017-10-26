@@ -94,12 +94,17 @@ let getmarketCalculate = async (callback) => {
 
 let insertLog = (obj, callback) => {
 	const ModelLogs = cermai.db.collection('logs');
+	const socket = cermai.socket;
 	ModelLogs.insert(obj, (err, rows) => {
-		if (callback) {
-			return callback();
-		} else {
-			return console.log("Log have\'nt callback")
-		}
+		ModelLogs.find({}).sort({created_at : -1 }).limit(5).toArray(function (err, rows) {
+			// return callback(err, rows);
+			socket.emit('getLogs',rows);
+			if (callback) {
+				return callback();
+			} else {
+				return console.log("Log have\'nt callback")
+			}
+		});
 	});
 }
 
