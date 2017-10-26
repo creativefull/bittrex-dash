@@ -16,9 +16,12 @@ bittrex.options({
 // let dontBuyIfPercentageDownOverYTimeUnits = 5
 
 exports.getMarket = (cermai) => {
-	getmarketCalculate((result) => {
-		console.log(result)
+	buyCalculate(() => {
+
 	})
+	// getmarketCalculate((result) => {
+	// 	console.log(result)
+	// })
 }
 
 let getmarketCalculate = (callback) => {
@@ -89,10 +92,14 @@ let buyCalculate = (callback) => {
 	const history_buy = cermai.db.collection('history_buy');
 
 	ModelConfigBuy.findOne({}, (err, configBuy) => {
-		let buyCoinIfPercentageUpBy = configBuy.buyCoinIfPercentageUpBy;
-		let buyIfPriceUpOverLastWTimeUnits = configBuy.buyIfPriceUpOverLastWTimeUnits;
-		let dontBuyIfPercentageDownBy = configBuy.dontBuyIfPercentageDownBy;
-		let dontBuyIfPriceDownOverLastZTimeUnits = configBuy.dontBuyIfPriceDownOverLastZTimeUnits;
+		if (!configBuy) {
+			console.log("Need config buy")
+			return callback()
+		}
+		let buyCoinIfPercentageUpBy = parseInt(configBuy.buyCoinIfPercentageUpBy);
+		let buyIfPriceUpOverLastWTimeUnits = parseInt(configBuy.buyIfPriceUpOverLastWTimeUnits);
+		let dontBuyIfPercentageDownBy = parseInt(configBuy.dontBuyIfPercentageDownBy);
+		let dontBuyIfPriceDownOverLastZTimeUnits = parseInt(configBuy.dontBuyIfPriceDownOverLastZTimeUnits);
 		
 		let limit = buyIfPriceUpOverLastWTimeUnits <= 0 ? 0 : buyIfPriceUpOverLastWTimeUnits-1
 		let buy = false
