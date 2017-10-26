@@ -1,4 +1,6 @@
-const mode = process.env.NODE_ENV || 'development'
+const mode = process.env.NODE_ENV || 'development';
+const moment = require('moment');
+moment.locale('id');
 const config = require(__dirname + '/../config/api_key.json')[mode]
 
 const bittrex = require('node-bittrex-api')
@@ -82,6 +84,13 @@ let getmarketCalculate = (callback) => {
 			})
 			// console.log(dataMarket)
 		})
+	});
+}
+
+let insertLog = (obj, callback) => {
+	const ModelLogs = cermai.db.collection('logs');
+	ModelLogs.insert(obj, (err, rows) => {
+		return callback();
 	});
 }
 
