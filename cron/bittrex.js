@@ -15,69 +15,72 @@ bittrex.options({
 // let buyCoinIfPercentageUpOverXTimeUnits = 6
 // let dontBuyIfPercentageDownOverYTimeUnits = 5
 
-exports.getmarket = (cermai) => {
-	// global.cermai = cermai
-	console.log('getmarket !!!!!!!!!');
-	// getmarketCalculate((result) => {
-	// 	console.log(result)
-	// })
+exports.getMarket = (cermai) => {
+	getmarketCalculate((result) => {
+		console.log(result)
+	})
 }
 
 let getmarketCalculate = (callback) => {
 	const ModelConfigBuy = cermai.db.collection('configBuy');
 	ModelConfigBuy.findOne({}, (errr, configBuy) => {
+		if (!configBuy) {
+			return callback({message : 'Need config buy'})
+		}
+
 		let buyCoinIfPercentageUpOverXTimeUnits = configBuy.buyCoinIfPercentageUpOverXTimeUnits;
 		let dontBuyIfPercentageDownOverYTimeUnits = configBuy.dontBuyIfPercentageDownOverYTimeUnits;
-	});
-	bittrex.getmarketsummaries((data, error) => {
-		if (error) return console.error(error)
-		data.result.forEach((dataMarket) => {
-			const history_price = cermai.db.collection('history_price')
 
-			dataMarket.changeSincePrevious = (dataMarket.Last - dataMarket.PrevDay) / dataMarket.PrevDay
-			history_price.find({MarketName : dataMarket.MarketName}).count((err, count) => {
-				// GET Y TIMES UNIT
-				let skipY = (count + 1) - dontBuyIfPercentageDownOverYTimeUnits
-				// console.log(skipY)
-				skipY = skipY < 0 ? (dontBuyIfPercentageDownOverYTimeUnits - 1) : skipY == 0 ? skipY : skipY - 1
+		bittrex.getmarketsummaries((data, error) => {
+			if (error) return console.error(error)
+			data.result.forEach((dataMarket) => {
+				const history_price = cermai.db.collection('history_price')
 
-				// GET X TIMES UNIT
-				let skipX = (count + 1) - buyCoinIfPercentageUpOverXTimeUnits
-				skipX = skipX < 0 ? buyCoinIfPercentageUpOverXTimeUnits - 1 : skipX == 0 ? skipX : skipX - 1
+				dataMarket.changeSincePrevious = (dataMarket.Last - dataMarket.PrevDay) / dataMarket.PrevDay
+				history_price.find({MarketName : dataMarket.MarketName}).count((err, count) => {
+					// GET Y TIMES UNIT
+					let skipY = (count + 1) - dontBuyIfPercentageDownOverYTimeUnits
+					// console.log(skipY)
+					skipY = skipY < 0 ? (dontBuyIfPercentageDownOverYTimeUnits - 1) : skipY == 0 ? skipY : skipY - 1
 
-				dataMarket.indexCount = count+1
-				// console.log("SKIP Y", skipY)
-				history_price.find({MarketName : dataMarket.MarketName}).skip(skipY).limit(1).toArray((err, results) => {
-					if (err) return console.error(err)
-					// console.log(results)
-					if (results.length > 0) {
-						let percentageChangeSinceYTimeUnitsAgo = results[0].Last
-						dataMarket.percentageChangeSinceYTimeUnitsAgo = (dataMarket.Last - percentageChangeSinceYTimeUnitsAgo) / percentageChangeSinceYTimeUnitsAgo
-					} else {
-						dataMarket.percentageChangeSinceYTimeUnitsAgo = -0
-					}
+					// GET X TIMES UNIT
+					let skipX = (count + 1) - buyCoinIfPercentageUpOverXTimeUnits
+					skipX = skipX < 0 ? buyCoinIfPercentageUpOverXTimeUnits - 1 : skipX == 0 ? skipX : skipX - 1
 
-					// console.log("SKIP X", skipX)
-					history_price.find({MarketName : dataMarket.MarketName}).skip(skipX).limit(1).toArray((err, resultsX) => {
+					dataMarket.indexCount = count+1
+					// console.log("SKIP Y", skipY)
+					history_price.find({MarketName : dataMarket.MarketName}).skip(skipY).limit(1).toArray((err, results) => {
 						if (err) return console.error(err)
-						if (resultsX.length > 0) {
-							let percentageChangeSinceXTimeUnitsAgo = results[0].Last
-							dataMarket.percentageChangeSinceXTimeUnitsAgo = (dataMarket.Last - percentageChangeSinceXTimeUnitsAgo) / percentageChangeSinceXTimeUnitsAgo
+						// console.log(results)
+						if (results.length > 0) {
+							let percentageChangeSinceYTimeUnitsAgo = results[0].Last
+							dataMarket.percentageChangeSinceYTimeUnitsAgo = (dataMarket.Last - percentageChangeSinceYTimeUnitsAgo) / percentageChangeSinceYTimeUnitsAgo
 						} else {
-							dataMarket.percentageChangeSinceXTimeUnitsAgo = -0
+							dataMarket.percentageChangeSinceYTimeUnitsAgo = -0
 						}
 
-						// console.log(dataMarket)
-						history_price.insert(dataMarket, (err, inserted) => {
-							console.log("Data market inserted to database")
-							return callback(dataMarket)
+						// console.log("SKIP X", skipX)
+						history_price.find({MarketName : dataMarket.MarketName}).skip(skipX).limit(1).toArray((err, resultsX) => {
+							if (err) return console.error(err)
+							if (resultsX.length > 0) {
+								let percentageChangeSinceXTimeUnitsAgo = resultsX[0].Last
+								dataMarket.percentageChangeSinceXTimeUnitsAgo = (dataMarket.Last - percentageChangeSinceXTimeUnitsAgo) / percentageChangeSinceXTimeUnitsAgo
+							} else {
+								dataMarket.percentageChangeSinceXTimeUnitsAgo = -0
+							}
+
+							// console.log(dataMarket)
+							history_price.insert(dataMarket, (err, inserted) => {
+								console.log("Data market inserted to database")
+								return callback(dataMarket)
+							})
 						})
 					})
 				})
 			})
+			// console.log(dataMarket)
 		})
-		// console.log(dataMarket)
-	})
+	});
 }
 
 let buyCalculate = (callback) => {
@@ -107,30 +110,33 @@ let buyCalculate = (callback) => {
 						}
 
 						// 2ND CHECK
-						results.forEach((result) => {
-							if (result.changeSincePrevious < 0) {
-								console.log("NOT PASSED 2ND CHECK")
+						history_price.find({MarketName: dataMarket.MarketName}).sort({_id : -1}).limit(dontBuyIfPriceDownOverLastZTimeUnits).toArray((err, zTimeUnits) => {
+							if (err) return console.error(err)
+							zTimeUnits.forEach((result) => {
+								if (result.changeSincePrevious < 0) {
+									console.log("NOT PASSED 2ND CHECK")
+									buy = false
+									countFalls += 1
+								}
+							})
+
+							// 3RD CHECK
+							if (results[0].percentageChangeSinceYTimeUnitsAgo < (-1*dontBuyIfPercentageDownBy)) {
+								console.log("NOT PASSED 3RD CHECK")
 								buy = false
-								countFalls += 1
 							}
+
+							// 4TH CHECK
+							if (countFalls == dontBuyIfPriceDownOverLastZTimeUnits) {
+								console.log("NOT PASSED 4TH CHECK")
+								buy = false
+							}
+
+							if (buy) {
+								history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
+							}
+							console.log("BUY ? ", dataMarket.MarketName, buy)
 						})
-
-						// 3RD CHECK
-						if (results[0].percentageChangeSinceYTimeUnitsAgo < (-1*dontBuyIfPercentageDownBy)) {
-							console.log("NOT PASSED 3RD CHECK")
-							buy = false
-						}
-
-						// 4TH CHECK
-						if (countFalls == dontBuyIfPriceDownOverLastZTimeUnits) {
-							console.log("NOT PASSED 4TH CHECK")
-							buy = false
-						}
-
-						if (buy) {
-							history_buy.insert({MarketName : data.MarketName, created_at : new Date()})
-						}
-						console.log("BUY ? ", dataMarket.MarketName, buy)
 					}
 				})
 			})
