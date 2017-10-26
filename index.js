@@ -18,11 +18,12 @@ cermai.connect(function(err, db) {
 	// RUN CRONJOB
 
 	// run cron jon  1 jam
-	new cron('* 59 * * * *', () => {
+	new cron('* */59 * * * *', () => {
+		console.log("APAKAH CRON JALAN?")
 		ModelConfig.findOne({} , (err, rows) => {
-			if (rows.pause) {
+			if (!rows.pause) {
 				console.log('run cron perjam');
-				// getMarket({cermai : {db : db}})
+				getMarket(cermai)
 			}
 		})
 	}, () => console.log("[" + new Date() + "] Complete Cron"), true, 'America/Los_Angeles');
