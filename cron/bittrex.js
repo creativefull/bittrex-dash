@@ -18,7 +18,7 @@ bittrex.options({
 // let dontBuyIfPercentageDownOverYTimeUnits = 5
 
 exports.getMarket = async (cermai) => {
-	// await getmarketCalculate()
+	await getmarketCalculate()
 	await buyCalculate()
 }
 
