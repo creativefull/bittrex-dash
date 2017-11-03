@@ -21,7 +21,7 @@ cermai.connect(function(err, db) {
 	// RUN CRONJOB
 
 	// run cron jon  1 jam
-	new cron('* */5 * * * *', () => {
+	new cron('* * * * * *', () => {
 		console.log("APAKAH CRON JALAN?")
 		ModelConfig.findOne({} , (err, rows) => {
 			if (!rows.pause) {
