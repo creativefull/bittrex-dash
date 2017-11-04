@@ -2,6 +2,7 @@ function Welcome(db) {
 	const ModelConfigBuy = db.collection('configBuy');
 	const ModelConfig = db.collection('config');
 	const ModelLog = db.collection('logs');
+	const ModelHistory = db.collection('history_price');
 	const async = require('async');
 
 	this.index = function(req,res,next) {
@@ -52,6 +53,11 @@ function Welcome(db) {
 				ModelLog.find({}).sort({created_at : -1 }).limit(5).toArray(function (err, rows) {
 					return callback(err, rows);
 				});
+			},
+			function (callback) {
+				ModelHistory.find({}).sort({Created : -1}).limit(20).toArray(function (err, rows) {
+					return callback(err, rows);
+				});
 			}
 		], (err, results) => {
 			if (err) return res.json({status : 404});
@@ -62,7 +68,7 @@ function Welcome(db) {
 			if (results[1].demo != undefined ) {
 				output['demo'] = results[1].demo;
 			}
-			return res.json({status : 200, data : output, logs : results[2]});
+			return res.json({status : 200, data : output, logs : results[2], dataHistory : results[3]});
 		});
 	}
 
