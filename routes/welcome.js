@@ -68,13 +68,12 @@ function Welcome(db) {
 			if (results[1].demo != undefined ) {
 				output['demo'] = results[1].demo;
 			}
-			return res.json({status : 200, data : output, logs : results[2], dataHistory : results[3]});
+			return res.json({status : 200, data : output, logs : results[2], dataHistory : results[3], runningCronEvery : results[1].runningCronEvery});
 		});
 	}
 
 	this.SaveCron = (req, res, next) => {
 		var b = req.body;
-		console.log(b);
 		ModelConfig.findOne({},(err, cek) => {
 			if (cek == null) {
 				b['_id'] = '1';
@@ -86,6 +85,29 @@ function Welcome(db) {
 					return res.json({status : 200});
 				});
 			}
+		});
+	}
+
+	this.SaveCronConfig = (req, res, next) => {
+		let b = req.body;
+		var target = __dirname + '/../config/cron.json';
+		const jsonfile = require('jsonfile');
+		ModelConfig.findOne({},(err, cek) => {
+			let dataToWrite = {
+				time : parseInt(b.runningCronEvery)
+			}
+			jsonfile.writeFile(target, dataToWrite, function (err) {
+				if (cek == null) {
+					b['_id'] = '1';
+					ModelConfig.insert(b, (err, rows) => {
+						return res.json({status : 200});
+					});
+				} else {
+					ModelConfig.update({_id : '1'}, {$set : b} , (err, rows) => {
+						return res.json({status : 200});
+					});
+				}
+			})
 		});
 	}
 }
