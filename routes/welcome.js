@@ -96,18 +96,20 @@ function Welcome(db) {
 			let dataToWrite = {
 				time : parseInt(b.runningCronEvery)
 			}
-			jsonfile.writeFile(target, dataToWrite, function (err) {
-				if (cek == null) {
-					b['_id'] = '1';
-					ModelConfig.insert(b, (err, rows) => {
+			if (cek == null) {
+				b['_id'] = '1';
+				ModelConfig.insert(b, (err, rows) => {
+					jsonfile.writeFile(target, dataToWrite, function (err) {
 						return res.json({status : 200});
-					});
-				} else {
-					ModelConfig.update({_id : '1'}, {$set : b} , (err, rows) => {
+					})
+				});
+			} else {
+				ModelConfig.update({_id : '1'}, {$set : b} , (err, rows) => {
+					jsonfile.writeFile(target, dataToWrite, function (err) {
 						return res.json({status : 200});
-					});
-				}
-			})
+					})
+				});
+			}
 		});
 	}
 }
